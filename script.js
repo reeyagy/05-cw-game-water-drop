@@ -1,8 +1,10 @@
 // Variables to control game state
 let gameRunning = false; // Keeps track of whether game is active or not
 let dropMaker; // Will store our timer that creates drops regularly
+let bottleMaker;
 let catchChecker;
 let countdown;
+let confettiCleanup;
 let timeRemaining = 30;
 let score = 0;
 const winningMessages = [
@@ -20,6 +22,7 @@ const timeDisplay = document.getElementById("time");
 const gameResult = document.getElementById("game-result");
 const gameContainer = document.getElementById("game-container");
 const bucket = document.getElementById("bucket");
+let confettiOverlay;
 
 gameContainer.addEventListener("pointermove", (event) => {
   const containerBounds = gameContainer.getBoundingClientRect();
@@ -40,6 +43,7 @@ function startGame() {
   // Prevent multiple games from running at once
   if (gameRunning) return;
 
+  clearConfetti();
   gameRunning = true;
   score = 0;
   timeRemaining = 30;
@@ -49,6 +53,7 @@ function startGame() {
 
   // Create new drops every second (1000 milliseconds)
   dropMaker = setInterval(createDrop, 1000);
+  bottleMaker = setInterval(createBottle, 2200);
   catchChecker = setInterval(checkForCaughtDrops, 50);
   countdown = setInterval(() => {
     timeRemaining -= 1;
@@ -63,22 +68,29 @@ function startGame() {
 function endGame() {
   gameRunning = false;
   clearInterval(dropMaker);
+  clearInterval(bottleMaker);
   clearInterval(catchChecker);
   clearInterval(countdown);
-  gameContainer.querySelectorAll(".water-drop").forEach((drop) => drop.remove());
+  gameContainer.querySelectorAll(".water-drop, .plastic-bottle").forEach((item) => item.remove());
 
   const messages = score >= 20 ? winningMessages : losingMessages;
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   gameResult.textContent = `Final score: ${score}. ${randomMessage}`;
   gameResult.hidden = false;
+
+  if (score >= 20) {
+    showConfetti();
+  }
 }
 
 function resetGame() {
+  clearConfetti();
   gameRunning = false;
   clearInterval(dropMaker);
+  clearInterval(bottleMaker);
   clearInterval(catchChecker);
   clearInterval(countdown);
-  gameContainer.querySelectorAll(".water-drop").forEach((drop) => drop.remove());
+  gameContainer.querySelectorAll(".water-drop, .plastic-bottle").forEach((item) => item.remove());
 
   score = 0;
   timeRemaining = 30;
@@ -86,6 +98,34 @@ function resetGame() {
   timeDisplay.textContent = timeRemaining;
   gameResult.hidden = true;
   bucket.style.left = "calc(50% - 45px)";
+}
+
+function showConfetti() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const colors = ["#FFC907", "#2E9DF7", "#8BD1CB", "#4FCB53", "#FF902A"];
+  confettiOverlay = document.createElement("div");
+  confettiOverlay.className = "confetti-overlay";
+  confettiOverlay.setAttribute("aria-hidden", "true");
+
+  for (let i = 0; i < 80; i += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = `${3 + Math.random() * 1.5}s`;
+    piece.style.animationDelay = `${Math.random() * 0.4}s`;
+    confettiOverlay.appendChild(piece);
+  }
+
+  document.body.appendChild(confettiOverlay);
+  confettiCleanup = setTimeout(clearConfetti, 5200);
+}
+
+function clearConfetti() {
+  clearTimeout(confettiCleanup);
+  confettiOverlay?.remove();
+  confettiOverlay = null;
 }
 
 function createDrop() {
@@ -117,26 +157,42 @@ function createDrop() {
   });
 }
 
+function createBottle() {
+  const bottle = document.createElement("div");
+  bottle.className = "plastic-bottle";
+  bottle.setAttribute("aria-hidden", "true");
+
+  const gameWidth = gameContainer.clientWidth;
+  const bottleWidth = 36;
+  bottle.style.left = `${Math.random() * (gameWidth - bottleWidth)}px`;
+  bottle.style.animationDuration = "4.5s";
+
+  gameContainer.appendChild(bottle);
+  bottle.addEventListener("animationend", () => bottle.remove());
+}
+
 function checkForCaughtDrops() {
   if (!gameRunning) return;
 
   const bucketBounds = bucket.getBoundingClientRect();
 
-  gameContainer.querySelectorAll(".water-drop").forEach((drop) => {
-    if (drop.dataset.caught) return;
+  gameContainer.querySelectorAll(".water-drop, .plastic-bottle").forEach((item) => {
+    if (item.dataset.caught) return;
 
-    const dropBounds = drop.getBoundingClientRect();
+    const itemBounds = item.getBoundingClientRect();
     const touchesBucket =
-      dropBounds.right > bucketBounds.left &&
-      dropBounds.left < bucketBounds.right &&
-      dropBounds.bottom > bucketBounds.top &&
-      dropBounds.top < bucketBounds.bottom;
+      itemBounds.right > bucketBounds.left &&
+      itemBounds.left < bucketBounds.right &&
+      itemBounds.bottom > bucketBounds.top &&
+      itemBounds.top < bucketBounds.bottom;
 
     if (touchesBucket) {
-      drop.dataset.caught = "true";
-      score += 1;
+      item.dataset.caught = "true";
+      score = item.classList.contains("plastic-bottle")
+        ? Math.max(0, score - 1)
+        : score + 1;
       scoreDisplay.textContent = score;
-      drop.remove();
+      item.remove();
     }
   });
 }

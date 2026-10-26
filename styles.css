@@ -84,6 +84,28 @@ body {
     background-color: #FFF2BF;
 }
 
+.confetti-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -20px;
+    width: 10px;
+    height: 16px;
+    animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+    }
+}
+
 #game-container {
     width: 100%;
     height: clamp(320px, 65vh, 600px);
@@ -160,6 +182,46 @@ body {
     margin: -15px;  /* Offset padding to maintain visual size */
 }
 
+.plastic-bottle {
+    position: absolute;
+    top: 0;
+    width: 36px;
+    height: 52px;
+    border: 2px solid #9B6B35;
+    border-radius: 10px 10px 8px 8px;
+    background: linear-gradient(
+        to bottom,
+        #F7E7C6 0 34%,
+        #FF902A 34% 70%,
+        #F7E7C6 70% 100%
+    );
+    animation: dropFall linear forwards;
+}
+
+.plastic-bottle::before {
+    position: absolute;
+    top: -8px;
+    left: 7px;
+    width: 16px;
+    height: 8px;
+    border: 2px solid #9B6B35;
+    border-bottom: 0;
+    border-radius: 5px 5px 0 0;
+    background-color: #F7E7C6;
+    content: "";
+}
+
+.plastic-bottle::after {
+    position: absolute;
+    top: -13px;
+    left: 7px;
+    width: 18px;
+    height: 6px;
+    border-radius: 2px;
+    background-color: #9B6B35;
+    content: "";
+}
+
 .bad-drop {
     background-color: #ff4444;
 }
@@ -215,5 +277,11 @@ body {
     #game-container {
         height: 60vh;
         min-height: 300px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .confetti-piece {
+        animation: none;
     }
 }
