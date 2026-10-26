@@ -34,6 +34,7 @@ gameContainer.addEventListener("pointermove", (event) => {
 
 // Wait for button click to start the game
 document.getElementById("start-btn").addEventListener("click", startGame);
+document.getElementById("reset-btn").addEventListener("click", resetGame);
 
 function startGame() {
   // Prevent multiple games from running at once
@@ -70,6 +71,21 @@ function endGame() {
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   gameResult.textContent = `Final score: ${score}. ${randomMessage}`;
   gameResult.hidden = false;
+}
+
+function resetGame() {
+  gameRunning = false;
+  clearInterval(dropMaker);
+  clearInterval(catchChecker);
+  clearInterval(countdown);
+  gameContainer.querySelectorAll(".water-drop").forEach((drop) => drop.remove());
+
+  score = 0;
+  timeRemaining = 30;
+  scoreDisplay.textContent = score;
+  timeDisplay.textContent = timeRemaining;
+  gameResult.hidden = true;
+  bucket.style.left = "calc(50% - 45px)";
 }
 
 function createDrop() {

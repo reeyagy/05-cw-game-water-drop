@@ -109,9 +109,9 @@ body {
 }
 
 
-#start-btn {
+#start-btn,
+#reset-btn {
     padding: 10px 18px;
-    background-color: var(--brand-yellow);
     color: var(--brand-ink);
     border: none;
     border-radius: 6px;
@@ -120,11 +120,24 @@ body {
     font-weight: bold;
 }
 
+#start-btn {
+    background-color: var(--brand-yellow);
+}
+
+#reset-btn {
+    background-color: #D7EEFF;
+}
+
 #start-btn:hover {
     background-color: #E6B400;
 }
 
-#start-btn:focus-visible {
+#reset-btn:hover {
+    background-color: #B8DFFF;
+}
+
+#start-btn:focus-visible,
+#reset-btn:focus-visible {
     outline: 3px solid var(--brand-blue);
     outline-offset: 3px;
 }
@@ -194,8 +207,8 @@ body {
         font-size: 20px;
     }
 
-    #start-btn {
-        grid-column: 1 / -1;
+    #start-btn,
+    #reset-btn {
         width: 100%;
     }
 
