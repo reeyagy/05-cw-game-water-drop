@@ -174,12 +174,15 @@ body {
     position: absolute;
     width: 60px;  /* increased from 40px */
     height: 60px; /* increased from 40px */
-    background-color: var(--brand-blue);
-    border-radius: 50%;
+    color: var(--brand-blue);
     animation: dropFall linear forwards;
     transform-origin: center;
-    padding: 15px;  /* Add padding for larger click area */
-    margin: -15px;  /* Offset padding to maintain visual size */
+}
+
+.water-drop svg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .plastic-bottle {

@@ -132,6 +132,19 @@ function createDrop() {
   // Create a new div element that will be our water drop
   const drop = document.createElement("div");
   drop.className = "water-drop";
+  drop.setAttribute("aria-hidden", "true");
+
+  const dropShape = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  dropShape.setAttribute("viewBox", "0 0 100 100");
+  dropShape.setAttribute("preserveAspectRatio", "none");
+  const dropPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  dropPath.setAttribute(
+    "d",
+    "M50 2 C42 18 12 43 12 65 C12 84 29 98 50 98 C71 98 88 84 88 65 C88 43 58 18 50 2 Z"
+  );
+  dropPath.setAttribute("fill", "currentColor");
+  dropShape.appendChild(dropPath);
+  drop.appendChild(dropShape);
 
   // Make drops different sizes for visual variety
   const initialSize = 60;
