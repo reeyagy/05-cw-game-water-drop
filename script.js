@@ -5,8 +5,19 @@ let catchChecker;
 let countdown;
 let timeRemaining = 30;
 let score = 0;
+const winningMessages = [
+  "Amazing catch! You won!",
+  "Great job! You reached the goal!",
+  "You're a water-saving champion!",
+];
+const losingMessages = [
+  "Nice try! Play again to reach 20 points.",
+  "Keep practicing—you can do it!",
+  "Almost there! Give it another try.",
+];
 const scoreDisplay = document.getElementById("score");
 const timeDisplay = document.getElementById("time");
+const gameResult = document.getElementById("game-result");
 const gameContainer = document.getElementById("game-container");
 const bucket = document.getElementById("bucket");
 
@@ -33,6 +44,7 @@ function startGame() {
   timeRemaining = 30;
   scoreDisplay.textContent = score;
   timeDisplay.textContent = timeRemaining;
+  gameResult.hidden = true;
 
   // Create new drops every second (1000 milliseconds)
   dropMaker = setInterval(createDrop, 1000);
@@ -53,6 +65,11 @@ function endGame() {
   clearInterval(catchChecker);
   clearInterval(countdown);
   gameContainer.querySelectorAll(".water-drop").forEach((drop) => drop.remove());
+
+  const messages = score >= 20 ? winningMessages : losingMessages;
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  gameResult.textContent = `Final score: ${score}. ${randomMessage}`;
+  gameResult.hidden = false;
 }
 
 function createDrop() {

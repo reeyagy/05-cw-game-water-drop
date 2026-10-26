@@ -57,6 +57,12 @@ body {
     font-weight: bold;
 }
 
+#game-result {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
 #game-container {
     width: 800px;
     height: 600px;
