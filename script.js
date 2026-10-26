@@ -12,7 +12,7 @@ const winningMessages = [
 ];
 const losingMessages = [
   "Nice try! Play again to reach 20 points.",
-  "Keep practicing—you can do it!",
+  "Keep practicing, you can do it!",
   "Almost there! Give it another try.",
 ];
 const scoreDisplay = document.getElementById("score");
