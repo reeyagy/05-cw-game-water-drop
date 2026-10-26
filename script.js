@@ -2,8 +2,11 @@
 let gameRunning = false; // Keeps track of whether game is active or not
 let dropMaker; // Will store our timer that creates drops regularly
 let catchChecker;
+let countdown;
+let timeRemaining = 30;
 let score = 0;
 const scoreDisplay = document.getElementById("score");
+const timeDisplay = document.getElementById("time");
 const gameContainer = document.getElementById("game-container");
 const bucket = document.getElementById("bucket");
 
@@ -27,11 +30,29 @@ function startGame() {
 
   gameRunning = true;
   score = 0;
+  timeRemaining = 30;
   scoreDisplay.textContent = score;
+  timeDisplay.textContent = timeRemaining;
 
   // Create new drops every second (1000 milliseconds)
   dropMaker = setInterval(createDrop, 1000);
   catchChecker = setInterval(checkForCaughtDrops, 50);
+  countdown = setInterval(() => {
+    timeRemaining -= 1;
+    timeDisplay.textContent = timeRemaining;
+
+    if (timeRemaining === 0) {
+      endGame();
+    }
+  }, 1000);
+}
+
+function endGame() {
+  gameRunning = false;
+  clearInterval(dropMaker);
+  clearInterval(catchChecker);
+  clearInterval(countdown);
+  gameContainer.querySelectorAll(".water-drop").forEach((drop) => drop.remove());
 }
 
 function createDrop() {
@@ -64,6 +85,8 @@ function createDrop() {
 }
 
 function checkForCaughtDrops() {
+  if (!gameRunning) return;
+
   const bucketBounds = bucket.getBoundingClientRect();
 
   gameContainer.querySelectorAll(".water-drop").forEach((drop) => {
